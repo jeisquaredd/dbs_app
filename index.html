@@ -128,8 +128,17 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" name="student_name" class="form-control mb-2" placeholder="Student Name" required>
-          <input type="text" name="course_name" class="form-control" placeholder="Course Name" required>
+          <input type="text" name="student_id" class="form-control mb-2" placeholder="Student ID" required>
+          <input type="text" disabled name="student_name" class="form-control mb-2" placeholder="Student Name" required>
+          
+          <select name="course_id" class="form-control" required>
+            <option value="">Select Course</option>
+            <option value="1">Computer Science</option>
+            <option value="2">Information Technology</option>
+            <option value="3">Software Engineering</option>
+            <option value="4">Data Science</option>
+          </select>
+          
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-info">Enroll</button>
