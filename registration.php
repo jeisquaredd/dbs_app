@@ -1,3 +1,46 @@
+<?php
+    require_once('classes/database.php');
+    $con = new database();
+
+    $sweetAlertConfig = "";
+
+    if (isset($_POST['register'])){
+      echo 'submitted';
+      $username = $_POST['username'];
+      $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+      $firstname = $_POST['first_name'];
+      $lastname = $_POST['last_name'];
+
+      $userID = $con->signupUser($username, $password, $firstname, $lastname);
+      
+      if ($userID) {
+        $sweetAlertConfig = "
+        <script>
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful',
+          text: 'You have successfully registered as an admin.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          window.location.href = 'login.php';
+        });
+        </script>
+        ";
+      } else {
+        $sweetAlertConfig = "
+         <script>
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: 'An error occurred during registration. Please try again.',
+          confirmButtonText: 'OK'
+        });
+        </script>"
+        
+        ;
+      }
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,8 +73,11 @@
       <button type="submit" name="register" class="btn btn-primary w-100">Register</button>
     </form>
   </div>
-
+  
   <script src="./bootstrap-5.3.3-dist/js/bootstrap.js"></script>
   <script src="./package/dist/sweetalert2.js"></script>
+
+  <?php echo $sweetAlertConfig ?>
+  
 </body>
 </html>
