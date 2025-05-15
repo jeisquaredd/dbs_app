@@ -97,9 +97,46 @@
   // Validation functions for each field
   const isNotEmpty = (value) => value.trim() !== '';
   const isPasswordValid = (value) => {
-    // Regular expression for password validation
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     return passwordRegex.test(value);
+  };
+
+  // Real-time username validation using AJAX
+  const checkUsernameAvailability = (usernameField) => {
+    usernameField.addEventListener('input', () => {
+      const username = usernameField.value.trim();
+
+      if (username === '') {
+        usernameField.classList.remove('is-valid');
+        usernameField.classList.add('is-invalid');
+        usernameField.nextElementSibling.textContent = 'Username is required.';
+        return;
+      }
+
+      // Send AJAX request to check username availability
+      fetch('ajax/check_username.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `username=${encodeURIComponent(username)}`,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.exists) {
+            usernameField.classList.remove('is-valid');
+            usernameField.classList.add('is-invalid');
+            usernameField.nextElementSibling.textContent = 'Username is already taken.';
+          } else {
+            usernameField.classList.remove('is-invalid');
+            usernameField.classList.add('is-valid');
+            usernameField.nextElementSibling.textContent = '';
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
   };
 
   // Get form fields
@@ -111,8 +148,8 @@
   // Attach real-time validation to each field
   validateField(firstName, isNotEmpty);
   validateField(lastName, isNotEmpty);
-  validateField(username, isNotEmpty);
   validateField(password, isPasswordValid);
+  checkUsernameAvailability(username);
 
   // Form submission validation
   document.getElementById('registrationForm').addEventListener('submit', function (e) {
@@ -121,7 +158,7 @@
     let isValid = true;
 
     // Validate all fields on submit
-    [firstName, lastName, username, password].forEach(field => {
+    [firstName, lastName, username, password].forEach((field) => {
       if (!field.classList.contains('is-valid')) {
         field.classList.add('is-invalid');
         isValid = false;
@@ -134,5 +171,7 @@
     }
   });
 </script>
+
+
 </body>
 </html>
